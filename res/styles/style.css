@@ -39,7 +39,6 @@ html {
     margin: 5px;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 1.2rem;
-    
 }
 
 #button-warrior {
@@ -52,4 +51,25 @@ html {
 
 #button-wizard {
     background-color: teal;
+}
+
+.button-enemy {
+    background-color: coral;
+}
+
+#attack-buttons button {
+    background-color: coral;
+}
+
+#magic-buttons button {
+    background-color: teal;
+}
+
+#magic-buttons {
+    display: none;
+}
+
+.action-button {
+    width: 240px;
+    
 }
