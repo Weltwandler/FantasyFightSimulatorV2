@@ -132,6 +132,67 @@ class Magic {
     }
 }
 
-class GameLogic {
+
+
+// Set up DOM elements
+
+const welcomeField = document.getElementById("welcome");
+const charNameField = document.getElementById("name-select");
+const enemySelectField = document.getElementById("enemy-select");
+const actionSelectField = document.getElementById("action-select");
+const actionOutcomeField = document.getElementById("action-outcome");
+const gameOverField = document.getElementById("game-over");
+const warriorButton = document.getElementById("button-warrior");
+const rogueButton = document.getElementById("button-rogue");
+const wizardButton = document.getElementById("button-wizard");
+
+warriorButton.onclick = selectWarrior;
+
+function selectWarrior() {
+
+    var pClass = 'Warrior';
+    var pMag = false;
+    var pHp = 30;
+    var pArm = 15;
+    var pAtt = 5;
+    var pDam = 7;
+
     
+    moveNameSelect();
 }
+
+function selectRogue() {
+
+    var pClass = 'Rogue';
+    var pMag = false;
+    var pHp = 25;
+    var pArm = 12;
+    var pAtt = 5;
+    var pDam = 10;
+
+    moveNameSelect();
+
+}
+
+function selectWizard() {
+
+    var pClass = 'Wizard';
+    var pMag = true;
+    var pHp = 20;
+    var pArm = 10;
+    var pAtt = 3;
+    var pDam = 5;
+
+    moveNameSelect();
+
+}
+
+function moveNameSelect() {
+
+    welcomeField.style.display = 'none';
+    charNameField.style.display = 'block';
+
+}
+
+// Game structure
+

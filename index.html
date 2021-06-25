@@ -2,7 +2,8 @@
 <html lang="en">
     <head>
         <title>Fantasy Fight Simulator</title>
-        <link rel="stylesheet" type="text/css" href="res/styles/style.css">
+        <link rel="stylesheet" type="text/css" href="./res/styles/style.css">
+        <script src="./res/scripts/game.js" type="text/javascript" defer></script>
     </head>
     <body>
         <div class="grid-container">
@@ -30,10 +31,17 @@
             <div id="main">
                 <!-- This is the main game area. It contains multiple different pieces of content whose visibility will be turned on and off programmatically-->
                 <div id="welcome" class="toggle">
-                    <p>E</p>
+                    <h3>Welcome!</h3>
+                    <h4>Please select your character class</h4>
+                    <div>
+                        <button id="button-warrior">Warrior</button><button id="button-rogue">Rogue</button><button id="button-wizard">Wizard</button>
+                    </div>
                 </div>
                 <div id="name-select" class="toggle">
                     <p>E1</p>
+                </div>
+                <div id="enemy-select" class="toggle">
+
                 </div>
                 <div id="action-select" class="toggle">
 
@@ -69,4 +77,5 @@
             </div>
         </div>
     </body>
+    
 </html>
