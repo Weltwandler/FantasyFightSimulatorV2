@@ -1,0 +1,32 @@
+/* Set up grid */
+
+.grid-container {
+    display: grid;
+    grid-template-columns: 1fr 4fr 1fr;
+    grid-template-rows: 1fr 5fr 1fr;
+}
+
+/* Main play are toggles */
+
+.toggle {
+    display: none;
+}
+
+#welcome {
+    display: block;
+}
+
+/* Other style elements*/
+
+html {
+    background-color: black;
+    color: white;
+    text-align: center;
+}
+
+#header h1 {
+    font-family: Luminari, fantasy, sans-serif;
+    font-size: 3rem;
+    
+}
+
