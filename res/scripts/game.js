@@ -112,31 +112,6 @@ class Enemy extends Character {
     }
 }
 
-class Magic {
-    constructor(name, cost, heal, effect) {
-        this._name = name;
-        this._cost = cost;
-        this._heal = heal;
-        this._effect = effect;
-    }
-
-    get name() {
-        return this._name;
-    }
-
-    get cost() {
-        return this._cost;
-    }
-
-    get heal() {
-        return this._heal;
-    }
-
-    get effect() {
-        return this._effect;
-    }
-}
-
 // Set up DOM elements
 
 const welcomeField = document.getElementById("welcome");
@@ -182,7 +157,9 @@ const healingButton = document.getElementById("button-healing");
 const confirmButton = document.getElementById("confirm-outcomes");
 const playAgainButton = document.getElementById("play-again");
 const goesFirstField = document.getElementById("goes-first");
- 
+
+// Set up objects and variables
+
 const pChar = new PlayerChar('Name', 'default', false, 1, 1, 1, 1)
 const eChar = new Enemy('default', 1, 1, 1, 1);
 
@@ -192,6 +169,7 @@ let mana;
 let healing;
 let currentSpell;
 
+// Set up event listeners
 
 warriorButton.onclick = selectWarrior;
 rogueButton.onclick = selectRogue;
@@ -209,8 +187,9 @@ fireballButton.onclick = selectFireball;
 lightningButton.onclick = selectLightning;
 healingButton.onclick = selectHealing;
 confirmButton.onclick = nextRound;
-playAgainButton.onclick = location.reload;
+playAgainButton.onclick = newGame;
 
+// Game functions
 
 function selectWarrior() {
 
@@ -259,8 +238,6 @@ function moveNameSelect() {
     charNameField.style.display = 'block';
 
 }
-
-
 
 function createChar() {
     
@@ -403,20 +380,21 @@ function selectHealing() {
 }
 
 function attackFunc(mod, damage) {
-    let attackRoll = rollTwenty + pChar.attack + mod;
+    let attackRoll = rollTwenty() + pChar.attack + mod;
     let dam;
     if (attackRoll >= eChar.armor) {
-        dam = rollFive + damage + pChar.damage;
+        dam = rollFive() + damage;
     } else {
         dam = 0;
     }
-    resolveAction(damage, 0, 0);
+    resolveAction(dam, 0, 0);
 }
 
 function spell(name, playerTarget, mana, effect, mod) {
     if (mana > pChar.manaPoints) {
         alert('Not enough Mana points - select a different action!');
     } else {
+        // pChar.manaPoints -= mana;
         currentSpell = name;
         let out = mod;
         for (let i=0; i < effect; i++) {
@@ -505,23 +483,25 @@ function resolveAction(damage, mana, healing) {
     } else if (pChar.hitPoints / pChar.initialHP < 0.67) {
         pcHpField.style.color = 'orange';
     }
+    if (pChar.magic) {
+        pcManaField.innerHTML = 'Mana Points: ' + pChar.manaPoints;
+    }
     enemyHpField.innerHTML = 'HP: ' + eChar.hitPoints;
     actionOutcomeField.style.display = 'block';
     actionSelectField.style.display = 'none';
 }
 
 function rollTwenty() {
+    // Simulates the roll of a twnty-sided die - for use in attack rolls
     let result = Math.floor(Math.random() * 20) + 1;
-    alert(result);
     return result;
 }
 
 function rollFive() {
+    // Returns a number between -2 and +2, used for damage rolls
     let result = Math.floor(Math.random() * 5) -2;
-    alert(result);
     return(result);
 }
-
 
 function checkVictory() {
     if (eChar.hitPoints <= 0) {
@@ -540,8 +520,8 @@ function checkDefeat() {
     if(pChar.hitPoints <= 0) {
         actionSelectField.style.display = 'none';
         gameOverField.style.display = 'block';
-        outcomeField.innerHTML = pChar.name + 'was defeated by ' + eChar.type + '. Better luck next time!';
-        document.getElementById('all').style.backgroundColor = 'lightred';
+        outcomeField.innerHTML = pChar.name + ' was defeated by ' + eChar.type + '. Better luck next time!';
+        document.getElementById('all').style.backgroundColor = 'lightcoral';
         document.getElementById('all').style.color = 'black';
         return true;
     } else {
@@ -552,4 +532,8 @@ function checkDefeat() {
 function nextRound() {
     actionOutcomeField.style.display = 'none';
     actionSelectField.style.display = 'block';
+}
+
+function newGame() {
+    location.reload();
 }
