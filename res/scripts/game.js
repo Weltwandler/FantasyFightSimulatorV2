@@ -137,8 +137,6 @@ class Magic {
     }
 }
 
-
-
 // Set up DOM elements
 
 const welcomeField = document.getElementById("welcome");
@@ -159,6 +157,11 @@ const enemyHpField = document.getElementById("enemy-hp");
 const enemyArmorField = document.getElementById("enemy-armor");
 const enemyAttackField = document.getElementById("enemy-attack");
 const enemyDamageField = document.getElementById("enemy-damage");
+const firstHeadingField = document.getElementById("first-action-heading");
+const secondHeadingField = document.getElementById("second-action-heading");
+const firstOutcomeField = document.getElementById("first-action-outcome");
+const secondOutcomeField = document.getElementById("second-action-outcome");
+const outcomeField = document.getElementById("outcome");
 const warriorButton = document.getElementById("button-warrior");
 const rogueButton = document.getElementById("button-rogue");
 const wizardButton = document.getElementById("button-wizard");
@@ -170,20 +173,24 @@ const dragonButton = document.getElementById("button-dragon");
 const banditButton = document.getElementById("button-bandit");
 const randomButton = document.getElementById("button-random");
 const magicButtons = document.getElementById("magic-buttons");
-const cautiousButton = document.getElementById("button-attack-cauious");
+const cautiousButton = document.getElementById("button-attack-cautious");
 const normalButton = document.getElementById("button-attack-normal");
 const aggressiveButton = document.getElementById("button-attack-aggressive");
 const fireballButton = document.getElementById("button-fireball");
 const lightningButton = document.getElementById("button-lightning");
 const healingButton = document.getElementById("button-healing");
+const confirmButton = document.getElementById("confirm-outcomes");
+const playAgainButton = document.getElementById("play-again");
 const goesFirstField = document.getElementById("goes-first");
-
-
+ 
 const pChar = new PlayerChar('Name', 'default', false, 1, 1, 1, 1)
 const eChar = new Enemy('default', 1, 1, 1, 1);
 
 let playerFirst;
-
+let damage;
+let mana;
+let healing;
+let currentSpell;
 
 
 warriorButton.onclick = selectWarrior;
@@ -195,7 +202,14 @@ goblinButton.onclick = selectGoblin;
 dragonButton.onclick = selectDragon;
 banditButton.onclick = selectBandit;
 randomButton.onclick = selectRandom;
-
+cautiousButton.onclick = selectCautious;
+normalButton.onclick = selectNormal;
+aggressiveButton.onclick = selectAggressive;
+fireballButton.onclick = selectFireball;
+lightningButton.onclick = selectLightning;
+healingButton.onclick = selectHealing;
+confirmButton.onclick = nextRound;
+playAgainButton.onclick = location.reload;
 
 
 function selectWarrior() {
@@ -364,4 +378,178 @@ function startGame() {
 
 }
 
+function selectCautious() {
+    attackFunc(pChar.attack + 4, pChar.damage -1);
+}
 
+function selectNormal() {
+    attackFunc(pChar.attack, pChar.damage);
+}
+
+function selectAggressive() {
+    attackFunc(pChar.attack - 2, pChar.damage +1);
+}
+
+function selectFireball() {
+    spell('Fireball', false, 10, 1, 10);
+}
+
+function selectLightning() {
+    spell('Lightning', false, 5, 2, 5);
+}
+
+function selectHealing() {
+    spell('Healing Hands', true, 5, 0, 10);
+}
+
+function attackFunc(mod, damage) {
+    let attackRoll = rollTwenty + pChar.attack + mod;
+    let dam;
+    if (attackRoll >= eChar.armor) {
+        dam = rollFive + damage + pChar.damage;
+    } else {
+        dam = 0;
+    }
+    resolveAction(damage, 0, 0);
+}
+
+function spell(name, playerTarget, mana, effect, mod) {
+    if (mana > pChar.manaPoints) {
+        alert('Not enough Mana points - select a different action!');
+    } else {
+        currentSpell = name;
+        let out = mod;
+        for (let i=0; i < effect; i++) {
+            out += rollFive();
+        }
+        if (playerTarget) {
+            resolveAction(0, mana, out);
+        } else {
+            resolveAction(out, mana, 0);
+        }
+    }
+    
+}
+
+function enemyAttack() {
+    if (playerFirst === true) {
+        secondHeadingField.innerHTML = eChar.type + ' attacked ' + pChar.name + '!';
+        if (rollTwenty() + eChar.attack >= pChar.armor) {
+            let dam = rollFive() + eChar.damage;
+            pChar.hitPoints -= dam;
+            secondOutcomeField.innerHTML = eChar.type + ' dealt ' + dam + ' damage to ' + pChar.name;
+        } else {
+            secondOutcomeField.innerHTML = eChar.type + ' failed to overcome ' + pChar.name + "'s armor";
+        }
+    } else {
+        firstHeadingField.innerHTML = eChar.type + ' attacked ' + pChar.name + '!';
+        if (rollTwenty() + eChar.attack >= pChar.armor) {
+            let dam = rollFive() + eChar.damage;
+            pChar.hitPoints -= dam;
+            firstOutcomeField.innerHTML = eChar.type + ' dealt ' + dam + ' damage to ' + pChar.name;
+        } else {
+            firstOutcomeField.innerHTML = eChar.type + ' failed to overcome ' + pChar.name + "'s armor";
+        }
+    }
+    
+}
+
+function resolveAction(damage, mana, healing) {
+
+    if (playerFirst) {
+        eChar.hitPoints -= damage;
+        pChar.hitPoints += healing;
+        pChar.manaPoints -= mana;
+        if(checkVictory()) {
+            return true;
+        }
+        enemyAttack();
+        if (checkDefeat()) {
+            return true;
+        }
+        if (damage > 0) {
+            firstHeadingField.innerHTML = pChar.name + ' attacked ' + eChar.type + '!';
+            firstOutcomeField.innerHTML = pChar.name + ' dealt ' + damage + ' damage to ' + eChar.type;
+        } else if (healing > 0) {
+            firstHeadingField.innerHTML = pChar.name + " cast 'Healing Hands'";
+            firstOutcomeField.innerHTML = pChar.name + ' healed themselves for ' + healing + ' Hit Points';
+        } else {
+            firstHeadingField.innerHTML = pChar.name + ' attacked ' + eChar.type + '!';
+            firstOutcomeField.innerHTML = pChar.name + ' failed to overcome ' + eChar.type + "'s armor";
+        }
+    } else {
+        enemyAttack();
+        if (checkDefeat()) {
+            return true;
+        }
+        eChar.hitPoints -= damage;
+        pChar.hitPoints += healing;
+        pChar.manaPoints -= mana;
+        if (checkVictory()) {
+            return true;
+        }
+        if (damage > 0) {
+            secondHeadingField.innerHTML = pChar.name + ' attacked ' + eChar.type + '!';
+            secondOutcomeField.innerHTML = pChar.name + ' dealt ' + damage + ' damage to ' + eChar.type;
+        } else if (healing > 0) {
+            secondHeadingField.innerHTML = pChar.name + " cast 'Healing Hands'";
+            secondOutcomeField.innerHTML = pChar.name + ' healed themselves for ' + healing + ' Hit Points';
+        } else {
+            secondHeadingField.innerHTML = pChar.name + ' attacked ' + eChar.type + '!';
+            secondOutcomeField.innerHTML = pChar.name + ' failed to overcome ' + eChar.type + "'s armor";
+        }
+    }
+    pcHpField.innerHTML = 'HP: ' + pChar.hitPoints + ' / ' + pChar.initialHP;
+    if (pChar.hitPoints / pChar.initialHP < 0.33) {
+        pcHpField.style.color = 'red';
+    } else if (pChar.hitPoints / pChar.initialHP < 0.67) {
+        pcHpField.style.color = 'orange';
+    }
+    enemyHpField.innerHTML = 'HP: ' + eChar.hitPoints;
+    actionOutcomeField.style.display = 'block';
+    actionSelectField.style.display = 'none';
+}
+
+function rollTwenty() {
+    let result = Math.floor(Math.random() * 20) + 1;
+    alert(result);
+    return result;
+}
+
+function rollFive() {
+    let result = Math.floor(Math.random() * 5) -2;
+    alert(result);
+    return(result);
+}
+
+
+function checkVictory() {
+    if (eChar.hitPoints <= 0) {
+        actionSelectField.style.display = 'none'
+        gameOverField.style.display = 'block';
+        outcomeField.innerHTML = pChar.name + ' defeated ' + eChar.type + '. Congratulations!';
+        document.getElementById('all').style.backgroundColor = 'lightgreen';
+        document.getElementById('all').style.color = 'black';
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function checkDefeat() {
+    if(pChar.hitPoints <= 0) {
+        actionSelectField.style.display = 'none';
+        gameOverField.style.display = 'block';
+        outcomeField.innerHTML = pChar.name + 'was defeated by ' + eChar.type + '. Better luck next time!';
+        document.getElementById('all').style.backgroundColor = 'lightred';
+        document.getElementById('all').style.color = 'black';
+        return true;
+    } else {
+        return false;
+    }
+}
+
+function nextRound() {
+    actionOutcomeField.style.display = 'none';
+    actionSelectField.style.display = 'block';
+}

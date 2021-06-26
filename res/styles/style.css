@@ -73,3 +73,14 @@ html {
     width: 240px;
     
 }
+
+#action-outcome {
+    margin: 20px;
+}
+
+#game-over {
+    margin: 20px;
+    color: black;
+    height: 100%;
+    width: 100%;
+}

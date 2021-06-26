@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="en">
+<html id="all" lang="en">
     <head>
         <title>Fantasy Fight Simulator</title>
         <link rel="stylesheet" type="text/css" href="./res/styles/style.css">
@@ -72,14 +72,23 @@
                     </div>
                 </div>
                 <div id="action-outcome" class="toggle">
-
+                    <h4 id="first-action-heading"></h4>
+                    <p id="first-action-outcome"></p>
+                    <br>
+                    <h4 id="second-action-heading"></h4>
+                    <p id="second-action-outcome"></p>
+                    <br>
+                    <button id="confirm-outcomes">Ok</button>
                 </div>
                 <div id="game-over" class="toggle">
-
+                    <h2>Game Over!</h2>
+                    <h4 id="outcome"></h4>
+                    <br>
+                    <button id="play-again">Play Again!</button>
                 </div>
             </div>
             <div id="right" class="character">
-                <!-- The text fields are empyu until they are filled programmatically -->
+                <!-- The text fields are empty until they are filled programmatically -->
                 <h2 id="enemy-type"></h2>
                 <h3 class="blank-line">&nbsp;</h3>
                 <p id="enemy-hp"></p>
